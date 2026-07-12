@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 18px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #667eea;
+            color: white;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .clear-btn {
+            background: #ff6b6b;
+            grid-column: span 4;
+        }
+
+        .clear-btn:hover {
+            background: #ff5252;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .result {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            word-wrap: break-word;
+        }
+
+        .error {
+            color: #ff6b6b;
+            font-size: 24px;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 18px;
+            }
+
+            .result-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>🧮 Калькулятор</h1>
+        
+        <div class="input-group">
+            <label for="num1">Первое число:</label>
+            <input type="number" id="num1" placeholder="Введите число" step="any">
+        </div>
+
+        <div class="input-group">
+            <label for="num2">Второе число:</label>
+            <input type="number" id="num2" placeholder="Введите число" step="any">
+        </div>
+
+        <div class="buttons">
+            <button onclick="calculate('+')">+</button>
+            <button onclick="calculate('-')">−</button>
+            <button onclick="calculate('*')">×</button>
+            <button onclick="calculate('/')">÷</button>
+            <button class="clear-btn" onclick="clearAll()">Очистить</button>
+        </div>
+
+        <div class="result">
+            <div class="result-label">Результат:</div>
+            <div class="result-value" id="result">—</div>
+        </div>
+    </div>
+
+    <script>
+        function calculate(operation) {
+            const num1Input = document.getElementById('num1');
+            const num2Input = document.getElementById('num2');
+            const resultDiv = document.getElementById('result');
+
+            const num1 = parseFloat(num1Input.value);
+            const num2 = parseFloat(num2Input.value);
+
+            // Проверка на пустые поля
+            if (num1Input.value === '' || num2Input.value === '') {
+                resultDiv.innerHTML = '<span class="error">⚠️ Заполните оба поля</span>';
+                return;
+            }
+
+            // Проверка на валидность чисел
+            if (isNaN(num1) || isNaN(num2)) {
+                resultDiv.innerHTML = '<span class="error">⚠️ Некорректные числа</span>';
+                return;
+            }
+
+            let result;
+            let operationSymbol;
+
+            // Выполнение операции с проверкой на деление на ноль
+            switch (operation) {
+                case '+':
+                    result = num1 + num2;
+                    operationSymbol = '+';
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    operationSymbol = '−';
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    operationSymbol = '×';
+                    break;
+                case '/':
+                    if (num2 === 0) {
+                        resultDiv.innerHTML = '<span class="error">⚠️ Деление на ноль!</span>';
+                        return;
+                    }
+                    result = num1 / num2;
+                    operationSymbol = '÷';
+                    break;
+                default:
+                    resultDiv.innerHTML = '<span class="error">⚠️ Операция не поддерживается</span>';
+                    return;
+            }
+
+            // Округление до 10 знаков после запятой для избежания проблем с плавающей точкой
+            result = Math.round(result * 10000000000) / 10000000000;
+
+            resultDiv.textContent = result;
+            resultDiv.classList.remove('error');
+        }
+
+        function clearAll() {
+            document.getElementById('num1').value = '';
+            document.getElementById('num2').value = '';
+            document.getElementById('result').textContent = '—';
+            document.getElementById('result').classList.remove('error');
+        }
+
+        // Поддержка Enter для вычисления
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const num1 = document.getElementById('num1').value;
+                const num2 = document.getElementById('num2').value;
+                if (num1 && num2) {
+                    calculate('+');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
